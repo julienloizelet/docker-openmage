@@ -1,0 +1,21 @@
+commands:
+  N98\Magento\Command\Installer\InstallCommand:
+    installation:
+      defaults:
+        currency: EUR
+        locale: fr_FR
+        timezone: Europe/Paris
+        use_secure: no
+        use_rewrites: yes
+        session_save: files
+        admin_password: password1234567admin
+
+    magento-packages:
+      - name: openmage-lts-1.9.4.x
+        version: dev-1.9.4.x
+        source:
+          url: https://github.com/OpenMage/magento-lts.git
+          type: git
+          reference: 1.9.4.x
+        extra:
+          sample-data: sample-data-1.9.2.4

@@ -1,0 +1,21 @@
+# You can copy this file, adjust variable, remove comment and rename it docker-compose.override.yml
+version: "3.7"
+services:
+  php-fpm:
+    volumes:
+    #  - /some/path/for/your-project-sources/:/var/www/html/web/
+    # - ./openmage-sources/:/var/www/html/web/
+    environment:
+      OPENMAGE_VERSION: openmage-lts-1.9.4.x
+      XDEBUG_CONFIG: "remote_host=172.19.0.1"
+      PHP_IDE_CONFIG: "serverName=openmage.local"
+  nginx:
+    volumes:
+    #  - /some/path/for/your-project-sources/:/var/www/html/web/
+    # - ./openmage-sources/:/var/www/html/web/
+    environment:
+      DOMAIN: openmage.local
+  mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: pw
+      DATABASE_NAME: "openmage"

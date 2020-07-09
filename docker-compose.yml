@@ -1,0 +1,65 @@
+version: "3.7"
+services:
+  nginx:
+    image: nginx:1.11.8
+    container_name: openmage_nginx
+    restart: on-failure
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./logs/nginx:/var/log/nginx
+      - ./conf/ssl/cert.pem:/etc/nginx/ssl/cert.pem
+      - ./conf/ssl/cert.key:/etc/nginx/ssl/cert.key
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./conf/nginx/templates/sites-enabled/default.conf.tmpl:/etc/default.conf.tmpl
+      - ./conf/nginx/includes:/etc/nginx/includes
+      - ./conf/nginx/custom-locations:/etc/nginx/custom-locations
+      - ./bin/nginx/nginx.sh:/bin/nginx.sh
+      - ./bin/substitute-env-vars.sh:/bin/substitute-env-vars.sh
+    links:
+      - "mysql:mysql"
+      - "maildev:maildev"
+    environment:
+      DOMAIN: openmage.local
+    entrypoint: /bin/nginx.sh
+  php-fpm:
+    build: ./docker-images/php7.3-fpm
+    container_name: openmage_php
+    links:
+      - "mysql:mysql"
+      - "maildev:maildev"
+    volumes:
+      - ./conf/php7.3/php.ini:/usr/local/etc/php/conf.d/openmage.ini
+      - ./conf/magerun/n98-magerun.yaml:/etc/n98-magerun.yaml
+      - ./bin/fix-permission.sh:/bin/fix-permission.sh
+    environment:
+      OPENMAGE_VERSION: openmage-lts-1.9.4.x
+  mysql:
+    image: mysql:5.7
+    container_name: openmage_mysql
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./database-datas/mysql:/var/lib/mysql
+      - ./database-datas/dump:/etc/dump
+      - ./conf/mysql/conf.d/my.cnf:/etc/mysql/conf.d/custom.cnf
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_ROOT_PASSWORD: pw
+      DATABASE_NAME: openmage
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: openmage_phpmyadmin
+    ports:
+      - "8081:80"
+    links:
+      - "mysql:mysql"
+    environment:
+      PMA_HOST: "mysql"
+      PMA_PORT: 3306
+  maildev:
+    image: maildev/maildev
+    container_name: openmage_maildev
+    ports:
+     - 8282:80
