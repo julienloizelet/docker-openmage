@@ -299,6 +299,9 @@ So, just run `sudo ./openmage destroy` and then `sudo ./openmage start` again.
 `for nginx  Cannot start service nginx: oci runtime error: container_linux.go:247: starting container process caused "exec: \"/bin/nginx.sh\": permission denied"`
 Workaround : before launch it again : `sudo chmod -R 777 bin`
 
+  - X-debug not working because of ufw firewall. Maybe you will have to open port 9000 on your machine if you are using ufw :
+  `sudo ufw allow from any to any port 9000 proto tcp comment xdebug`
+
   
 
 ## Contributing
